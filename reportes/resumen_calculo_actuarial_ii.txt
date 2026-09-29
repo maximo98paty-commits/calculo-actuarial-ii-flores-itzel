@@ -1,0 +1,102 @@
+RESUMEN – CÁLCULO ACTUARIAL II
+UNIDAD I: PRELIMINARES PROBABILÍSTICOS Y ENTORNO COMPUTACIONAL REPRODUCIBLE
+
+1. PROPÓSITO DE LA UNIDAD
+El cálculo actuarial busca representar matemáticamente obligaciones inciertas, establecer hipótesis defendibles, relacionarlas con datos observables y obtener resultados reproducibles y auditables. La unidad integra modelo matemático, implementación computacional y datos. Una idea central es: valor actuarial = E[valor presente aleatorio].
+
+2. INCERTIDUMBRE, TIEMPO Y DINERO
+Una obligación actuarial combina un evento incierto, un monto que depende del evento y un instante de pago que puede ser incierto. Si I indica la ocurrencia de un siniestro, B es un beneficio fijo y X=BI, con P(I=1)=q, entonces E[X]=Bq. Con B=$500,000 y q=0.004, el costo esperado es $2,000 por póliza. El valor esperado no es automáticamente una prima comercial, pues en la práctica intervienen gastos, margen de riesgo, capital, comisiones, impuestos, regulación y otras fuentes de costo.
+
+3. ENTORNO COMPUTACIONAL REPRODUCIBLE
+El trabajo actuarial debe conservar trazabilidad: fuente de datos -> transformación -> modelo -> resultado -> reporte. Git registra la historia del proyecto; GitHub mantiene el repositorio remoto y permite colaboración y automatización; Python ejecuta los cálculos; Visual Studio Code es el espacio de trabajo. Un entorno virtual aísla las bibliotecas del proyecto. La estructura del repositorio separa datos, notebooks, código reutilizable, pruebas, figuras y reportes. Los datos crudos no deben editarse manualmente: cualquier transformación debe realizarse mediante código reproducible.
+
+El ciclo básico de Git utiliza git status, git add, git commit, git pull y git push. README funciona como ficha técnica. Las pruebas automáticas permiten verificar funciones y GitHub Actions puede ejecutarlas cada vez que se suben cambios. La automatización no sustituye la comprensión matemática.
+
+4. PYTHON PARA MODELAR RIESGO
+Python permite representar cantidades actuariales mediante variables y funciones. NumPy facilita operaciones vectorizadas y simulaciones; Pandas trabaja con tablas; Matplotlib permite visualizar resultados; SciPy proporciona distribuciones de probabilidad. Una simulación utilizada en una práctica debe ser reproducible mediante una semilla pseudoaleatoria. La semilla permite reconstruir la misma secuencia.
+
+5. LENGUAJE DE PROBABILIDAD
+El espacio muestral Ω contiene los resultados que el modelo considera posibles. Un evento es una colección de resultados. Una sigma-álgebra F es una familia de eventos medibles. Un espacio de probabilidad es la terna (Ω,F,P), donde P satisface los axiomas de probabilidad.
+
+La probabilidad condicional se define como P(A|B)=P(A∩B)/P(B), cuando P(B)>0. La ley de probabilidad total permite combinar probabilidades de distintos segmentos y el teorema de Bayes permite invertir el condicionamiento. A y B son independientes cuando P(A∩B)=P(A)P(B). La independencia es una hipótesis que debe justificarse.
+
+6. VARIABLES ALEATORIAS
+Una variable aleatoria asigna un valor numérico a cada resultado. Las variables discretas se describen mediante una función de masa y las continuas mediante una densidad. La función de distribución es F_X(x)=P(X<=x). Los indicadores son especialmente útiles: 1_A vale 1 cuando ocurre A y 0 en caso contrario.
+
+7. ESPERANZA, VARIANZA Y DEPENDENCIA
+La esperanza representa el promedio teórico bajo el modelo. Se cumple E[aX+bY]=aE[X]+bE[Y]. La varianza mide dispersión: Var(X)=E[(X-E[X])²]. La covarianza mide dependencia lineal y Var(X+Y)=Var(X)+Var(Y)+2Cov(X,Y). Si X y Y son independientes, su covarianza es cero. La esperanza condicional permite estudiar el valor esperado bajo información adicional.
+
+8. CUANTILES Y TRANSFORMACIONES DE PÉRDIDAS
+Un cuantil describe una posición dentro de la distribución. Los contratos transforman las pérdidas. Con deducible d, el pago puede escribirse (X-d)+=max(X-d,0). Los límites también modifican la distribución del pago, por lo que debe analizarse la variable que realmente paga el contrato.
+
+9. DISTRIBUCIONES DISCRETAS FUNDAMENTALES
+Bernoulli modela dos resultados. Si X~Bernoulli(p), E[X]=p y Var(X)=p(1-p).
+Binomial modela el número de éxitos en n ensayos Bernoulli independientes: E[N]=np y Var(N)=np(1-p).
+Poisson modela conteos de eventos: E[N]=λ y Var(N)=λ. La igualdad entre media y varianza es una característica importante que debe revisarse con los datos.
+Geométrica modela el número de ensayos necesarios hasta observar el primer éxito bajo probabilidad constante e independencia.
+
+10. DISTRIBUCIONES CONTINUAS FUNDAMENTALES
+Uniforme: en [a,b], E[X]=(a+b)/2 y Var(X)=(b-a)²/12.
+Exponencial: si T~Exp(λ), E[T]=1/λ, Var(T)=1/λ² y P(T>t)=e^(-λt). Posee la propiedad de falta de memoria.
+Gamma: distribución positiva y asimétrica útil para severidades. Con parámetros α y θ, E[X]=αθ y Var(X)=αθ².
+Normal: distribución simétrica caracterizada por media y varianza. Es importante para aproximaciones y sumas de riesgos, aunque puede ser problemática para severidades individuales si genera valores negativos.
+
+11. RIESGO AGREGADO
+Para S=X1+...+Xn, E[S] es la suma de las esperanzas. Si los riesgos son independientes, Var(S) es la suma de las varianzas. Para riesgos iid con media μ y varianza σ²: E[S]=nμ y Var(S)=nσ². Esto explica parte del efecto de diversificación.
+
+En el modelo colectivo S=X1+...+XN, donde N es el número aleatorio de reclamaciones y Xj sus severidades. Si N es independiente de severidades iid con media μ y varianza σ²: E[S]=μE[N] y Var(S)=E[N]σ²+Var(N)μ². Si N~Poisson(λ), E[S]=λμ y Var(S)=λ(σ²+μ²).
+
+12. LEY DE LOS GRANDES NÚMEROS
+Si X1,X2,... son iid con media finita μ, el promedio muestral se aproxima a μ cuando aumenta el número de observaciones. En seguros, esto ayuda a explicar la estabilidad relativa de carteras grandes bajo hipótesis apropiadas. La convergencia no es necesariamente monotónica y una cartera grande no elimina el riesgo sistemático cuando muchas pólizas responden al mismo choque.
+
+13. DATOS REALES DE MÉXICO: EDR
+El INEGI publica las Estadísticas de Defunciones Registradas (EDR). Las notas señalan que para 2024 DEFUN24 contiene 819,672 casos y que la tasa bruta nacional fue de 630 defunciones registradas por cada 100 mil habitantes.
+
+Serie incluida en las notas:
+2015: 655,688 defunciones; tasa 536
+2016: 685,766; tasa 555
+2017: 703,047; tasa 563
+2018: 722,611; tasa 574
+2019: 747,784; tasa 588
+2020: 1,086,743; tasa 860
+2021: 1,122,249; tasa 879
+2022: 847,716; tasa 659
+2023: 799,869; tasa 619
+2024: 819,672; tasa 630
+
+Debe distinguirse entre conteo, tasa bruta y probabilidad actuarial individual. Una tasa de 630 por 100 mil no debe utilizarse automáticamente como q_x para todas las edades. También debe distinguirse entidad de ocurrencia de entidad de residencia. Antes de usar microdatos debe revisarse el diccionario, ya que la codificación de variables puede requerir interpretación específica.
+
+El flujo recomendado es descargar datos y diccionario de la fuente oficial, conservar el archivo original, registrar su procedencia, inspeccionar variables y códigos, recodificar mediante scripts, guardar datos procesados y comparar los totales con cifras oficiales.
+
+14. EJEMPLOS ACTUARIALES
+Las notas desarrollan ejemplos de probabilidad de al menos una reclamación, número exacto de eventos mediante binomial, excedencia con Poisson, tiempo de espera exponencial, pago con deducible y severidad exponencial, y costo agregado compound Poisson. Estos ejemplos muestran cómo frecuencia, severidad y transformaciones contractuales se integran en modelos actuariales.
+
+15. ERRORES CONCEPTUALES A EVITAR
+No debe confundirse densidad con probabilidad; una tasa agregada con una probabilidad individual; ni esperanza con un resultado determinista. La independencia debe justificarse y no todo conteo debe modelarse automáticamente con Poisson. No debe redondearse demasiado pronto, editar datos crudos, subir información sensible a GitHub ni depender únicamente de un notebook. Los resultados deben explicarse matemática y actuarialmente, no solamente diciendo que Python produjo un número.
+
+16. REPRODUCIBILIDAD Y ENTREGA
+El proyecto debe permitir que otra persona clone el repositorio, cree un entorno limpio, instale las dependencias, abra el notebook, ejecute las celdas en orden y obtenga las mismas cifras y gráficas esenciales. La unidad integra probabilidad, programación, datos oficiales y control de versiones para que el trabajo actuarial sea comprensible, verificable y reproducible.
+
+17. IDEAS CLAVE
+Al terminar la unidad se debe distinguir entre espacio muestral, evento y variable aleatoria; utilizar probabilidad condicional, Bayes y probabilidad total; reconocer cuándo la independencia es una hipótesis; calcular esperanza, varianza y covarianza; identificar distribuciones básicas; simular con una semilla reproducible; utilizar Git y GitHub; crear entornos virtuales; documentar datos oficiales y diferenciar una tasa bruta de una probabilidad actuarial específica por edad.
+
+NOTACIÓN ESENCIAL
+Ω: espacio muestral
+F: sigma-álgebra de eventos
+P(A): probabilidad del evento A
+P(A|B): probabilidad de A condicionada a B
+X: variable aleatoria
+F_X(x): función de distribución
+f_X(x): densidad
+p_X(x): función de masa
+E[X]: esperanza
+Var(X): varianza
+Cov(X,Y): covarianza
+1_A: indicador del evento A
+N: conteo de eventos o reclamaciones
+S: pérdida agregada
+q_α: cuantil de nivel α
+(x)+: max(x,0)
+
+FUENTES INDICADAS EN LAS NOTAS
+Las notas utilizan principalmente al INEGI para las Estadísticas de Defunciones Registradas y sus metadatos, además de documentación oficial de GitHub, Microsoft y Python para el entorno computacional.
